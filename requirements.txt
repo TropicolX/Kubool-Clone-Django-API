@@ -7,5 +7,6 @@ whitenoise
 dj-database-url
 celery
 redis
+psycopg2
 djangorestframework-simplejwt
 dj_database_url
