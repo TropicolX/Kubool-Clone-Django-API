@@ -27,7 +27,7 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['kubool-clone-api.herukoapp.com']
+ALLOWED_HOSTS = ['kubool-clone-api.herokuapp.com']
 
 
 # Application definition
