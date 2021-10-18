@@ -8,3 +8,4 @@ dj-database-url
 celery
 redis
 djangorestframework-simplejwt
+dj_database_url
