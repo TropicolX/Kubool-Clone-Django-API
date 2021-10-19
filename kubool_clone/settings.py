@@ -10,7 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import dj_database_url
 from pathlib import Path
+from datetime import time, timedelta
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,7 +45,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'corsheaders',
     'api',
-    'messaging'
+    'messaging',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -121,38 +124,41 @@ USE_L10N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL='api.CustomUser'
-
+AUTH_USER_MODEL = 'api.CustomUser'
 
 
 # rest framework settings
 REST_FRAMEWORK = {
-    
+
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        
+
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+}
+
 # swagger docs settings
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH':False,
-   'SECURITY_DEFINITIONS': {
-      'Bearer': {
+    'USE_SESSION_AUTH': False,
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-      }
-   }
+        }
+    }
 }
 
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOW_ALL_ORIGINS = True
 
-import dj_database_url 
-prod_db  =  dj_database_url.config(conn_max_age=500)
+prod_db = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)
 
 # Static files (CSS, JavaScript, Images)
