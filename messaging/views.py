@@ -17,7 +17,7 @@ class NewMessage(APIView):
     def post(self, request, *args, **kwargs):
 
         try:
-            user_code = kwargs['message']
+            user_code = kwargs['share_code']
             user = CustomUser.objects.get(share_code=user_code)
             message = request.data['message']
 

@@ -4,5 +4,5 @@ from .views import NewMessage
 app_name='messaging'
 
 urlpatterns = [
-    path('<str:message>/',NewMessage.as_view())
+    path('<str:share_code>/',NewMessage.as_view())
 ]
