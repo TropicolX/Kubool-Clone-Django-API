@@ -59,7 +59,11 @@ class Login(APIView):
             password = request.data['password']
             user = CustomUser.objects.get(username=username)
             if not check_password(password, user.password):
-                raise ParseError({"detail": "Incorrect password"})
+                return Response({"detail": "Incorrect password"})
+
+            refresh = RefreshToken.for_user(user)
+
+            return Response({'tokens': {'refresh': str(refresh), 'access': str(refresh.access_token)}})
 
         except CustomUser.DoesNotExist:
             raise NotFound({"detail": "Username not found"})
@@ -70,12 +74,8 @@ class Login(APIView):
 
         except Exception as ex:
             print(ex)  # remove for production
-            raise ParseError(
+            raise serializers.ValidationError(
                 {'detail': "Can't complete this request. Ensure the data posted is in the correct format."})
-
-        refresh = RefreshToken.for_user(user)
-
-        return Response({'tokens': {'refresh': str(refresh), 'access': str(refresh.access_token)}})
 
 
 class ChangePassword(APIView):
