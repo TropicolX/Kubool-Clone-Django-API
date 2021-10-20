@@ -17,7 +17,7 @@ class NewMessage(APIView):
     def post(self, request, *args, **kwargs):
 
         try:
-            user_code = kwargs['share_code']
+            user_code = kwargs['user_code']
             user = CustomUser.objects.get(share_code=user_code)
             message = request.data['message']
 
@@ -25,8 +25,8 @@ class NewMessage(APIView):
 
             user.messages.add(new_message)
 
-            deleteMessageTask.apply_async(
-                (new_message.id,), eta=new_message.created+timedelta(hours=23))
+            # deleteMessageTask.apply_async(
+            #     (new_message.id,), eta=new_message.created+timedelta(hours=23))
 
         except KeyError:
             raise ParseError(
