@@ -59,7 +59,7 @@ class Login(APIView):
             password = request.data['password']
             user = CustomUser.objects.get(username=username)
             if not check_password(password, user.password):
-                return Response({"detail": "Incorrect password"})
+                return Response(data={"detail": "Incorrect password"}, status=status.HTTP_400_BAD_REQUEST)
 
             refresh = RefreshToken.for_user(user)
 
