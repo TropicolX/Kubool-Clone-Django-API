@@ -18,7 +18,6 @@ from django.db.utils import IntegrityError
 
 class SignUp(APIView):
     ''' For Signing up a user '''
-    serializer_class = TokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
         try:
@@ -52,7 +51,7 @@ class SignUp(APIView):
 
 
 class Login(APIView):
-    ''' For logging in a user. Request sample: {"username": "string", "password": "string"}'''
+    ''' For logging in a user.'''
 
     def post(self, request, *args, **kwargs):
         try:
