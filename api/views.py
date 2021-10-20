@@ -1,4 +1,5 @@
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from api.models import CustomUser
 from .serializers import MessageSerializer
 
@@ -16,7 +17,8 @@ from django.db.utils import IntegrityError
 
 
 class SignUp(APIView):
-    ''' For Sign up user '''
+    ''' For Signing up a user '''
+    serializer_class = TokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
         try:
@@ -50,7 +52,7 @@ class SignUp(APIView):
 
 
 class Login(APIView):
-    ''' Login for user'''
+    ''' For logging in a user. Request sample: {"username": "string", "password": "string"}'''
 
     def post(self, request, *args, **kwargs):
         try:
@@ -117,7 +119,7 @@ class DeleteUser(APIView):
 
 
 class CheckUser(APIView):
-    """ view for verifying if user or not """
+    """ Verify if user exists or not """
 
     def post(self, request, *args, **kwargs):
         try:
@@ -144,7 +146,7 @@ class AllAnonMessages(APIView):
 
 
 class GetUser(APIView):
-    '''Get username and share code using valid access token'''
+    '''Get username and share code with authorization'''
     permission_classes = [IsAuthenticated, ]
 
     def post(self, request, *args, **kwargs):
