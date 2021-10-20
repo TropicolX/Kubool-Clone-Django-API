@@ -148,7 +148,7 @@ class GetUser(APIView):
     '''Get username and share code with authorization'''
     permission_classes = [IsAuthenticated, ]
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         user = request.user
         return Response({'data': {"username": user.username, "share_code": user.share_code}})
 
