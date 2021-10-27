@@ -12,7 +12,7 @@ from datetime import timedelta
 
 # for accepting new messages
 class NewMessage(APIView):
-    permission_classes = [AllowAny, ]
+    permission_classes = [AllowAny,]
 
     def post(self, request, *args, **kwargs):
 

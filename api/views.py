@@ -1,6 +1,7 @@
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from api.models import CustomUser
+from messaging.models import Message
 from .serializers import MessageSerializer
 
 from rest_framework.permissions import IsAuthenticated
@@ -38,14 +39,13 @@ class SignUp(APIView):
                 {"detail": "Provide a valid username and password"})
 
         except ValidationError as e:
-            raise ParseError({'detail': list(e)})
+            raise ParseError({'detail': " ".join(e)})
 
         except IntegrityError:
             raise serializers.ValidationError(
                 {'detail': "A user with this username already exists"})
 
         except Exception as ex:
-            print(ex)  # remove for production
             raise serializers.ValidationError(
                 {'detail': "Can't complete this request. Ensure the data posted is in the correct format."})
 
@@ -73,7 +73,6 @@ class Login(APIView):
                 {"detail": "Provide 'username' and 'password'"})
 
         except Exception as ex:
-            print(ex)  # remove for production
             raise serializers.ValidationError(
                 {'detail': "Can't complete this request. Ensure the data posted is in the correct format."})
 
@@ -98,10 +97,9 @@ class ChangePassword(APIView):
             raise ParseError({"detail": "Provide a valid password"})
 
         except ValidationError as e:
-            raise ParseError({'detail': list(e)})
+            raise ParseError({'detail': " ".join(e)})
 
         except Exception as ex:
-            print(ex)  # remove for production
             raise ParseError(
                 {'detail': "Can't complete this request. Ensure the data posted is in the correct format."})
 
@@ -110,7 +108,7 @@ class DeleteUser(APIView):
     """ For deleting User account"""
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         user = request.user
         user.delete()
 
@@ -124,9 +122,11 @@ class CheckUser(APIView):
         try:
             share_code = kwargs['share_code']
             user = CustomUser.objects.get(share_code=share_code)
+
         except CustomUser.DoesNotExist:
             raise NotFound(
-                detail="Sorry no user with these credidentials exists")
+                {'detail': "Sorry no user with these credidentials exists"})
+
         except KeyError:
             raise ParseError({"detail": "Provide a user share code"})
 
@@ -142,6 +142,26 @@ class AllAnonMessages(APIView):
         messages = MessageSerializer(user.messages.all(), many=True)
 
         return Response({'messages': messages.data})
+
+
+class DeleteMessage(APIView):
+    """Delete a user message"""
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            user = request.user
+            message_id = request.data['message_id']
+            message = user.messages.get(id=message_id)
+            message.delete()
+
+            return Response({'detail': "Message deleted successfully"})
+
+        except Message.DoesNotExist:
+            raise NotFound({'detail': "Message does not exist"})
+
+        except Exception as e:
+            return Response(data={'detail': 'Message could not be deleted'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetUser(APIView):
@@ -168,4 +188,4 @@ class BlacklistTokenView(APIView):
             raise ParseError({"detail": "Provide a refresh token"})
 
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(data={'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
